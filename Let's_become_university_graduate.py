@@ -241,6 +241,7 @@ def reset_game():
 reset_game()
 target_score = 30
 INVINCIBLE_DURATION = 10000
+start = pg.time.get_ticks()
 pickup_msg = ""
 pickup_timer = 0
 lunch_spawn_timer = random.randint(300, 1000)
@@ -260,6 +261,10 @@ while True:
                 pencil = Pencil(player.rect.centerx, player.rect.top)
                 all_sprites.add(pencil)
                 pencils.add(pencil)
+            if event.type == pg.KEYDOWN and event.key == pg.K_i and score >= 15:
+                if invincible == False:
+                    invincible = True
+                    start = pg.time.get_ticks()
         #ボスを追加
         if not bosses and frame_count >= boss_spawn_time: # 出現方法の設定
             boss = Boss() #クラスの呼び出し
@@ -283,7 +288,10 @@ while True:
             lunches.add(l)
             all_sprites.add(l)
             lunch_spawn_timer = random.randint(600, 1200)
-
+        
+        current = pg.time.get_ticks()
+        elapsed = current - start
+        #まとめて更新
         all_sprites.update()
 
         # 弾と敵
@@ -296,9 +304,15 @@ while True:
 
         # 敵弾とプレイヤー（HP & 無敵）
         if pg.sprite.spritecollideany(player, enemy_reports):
-            if player.inv_timer == 0:
-                player.hp -= 1
-                player.inv_timer = 60
+            current = pg.time.get_ticks()#現在時刻の入手
+            if invincible == True:
+                running = True
+                if elapsed >= INVINCIBLE_DURATION: #30秒以上たったら無敵モードを解除
+                    invincible = False
+            elif invincible == False:
+                if player.inv_timer == 0:
+                    player.hp -= 1
+                    player.inv_timer = 60
                 if player.hp <= 0:
                     result = "gameover"
                     running = False
@@ -309,9 +323,9 @@ while True:
             before = player.hp
             player.hp = min(player.max_hp, player.hp + 1)
             if player.hp > before:
-                pickup_msg = "🍛 元気回復！HP+1"
+                pickup_msg = "HP+1"
             else:
-                pickup_msg = "🍛 お腹いっぱい！（上限）"
+                pickup_msg = "max hp"
             pickup_timer = 60
 
         # クリア条件
@@ -322,10 +336,10 @@ while True:
         # 描画
         screen.blit(background, (0, 0))
         all_sprites.draw(screen)
-        score_text = font.render(f"単位: {score}", True, (255, 255, 255))
+        score_text = font.render(f"score: {score}", True, (255, 255, 255))
         screen.blit(score_text, (10, 10))
 
-        hearts = "♥" * player.hp + "♡" * (player.max_hp - player.hp)
+        hearts =  player.hp
         hp_text = font.render(f"HP: {hearts}", True, (255, 160, 160))
         screen.blit(hp_text, (10, 60))
 
@@ -342,7 +356,7 @@ while True:
             screen.blit(clear_img, clear_rect)
         else:
             screen.fill((0, 0, 0))
-        text1 = font.render("おめでとう！卒業おめでとう！", True, (255, 255, 0))
+        text1 = font.render("Congratulation", True, (255, 255, 0))
         text2 = font.render(f"Score: {score}", True, (255, 255, 255))
     else:
         if gameover_img and gameover_rect:
@@ -373,6 +387,8 @@ while True:
                 sys.exit()
             if event.type == pg.KEYDOWN:
                 waiting = False
+                frame_count = 0
+                bosses = False
                 reset_game()
 
 
