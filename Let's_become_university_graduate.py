@@ -158,7 +158,7 @@ class Boss(pg.sprite.Sprite):
         self.image = pg.image.load("img/enemy.png")#boss
         self.rect = self.image.get_rect(center = (WIDTH / 2, HEIGHT == max))#画面上部中央に出現
         self.speed_x = 1 #左右の速度
-        self.hp = 100 #ボスの体力
+        self.hp = 50 #ボスの体力
         self.shoot_delay = 90  #弾を撃つ間隔
         self.timer = 0  #タイマーの初期化
 
@@ -183,6 +183,7 @@ enemies = pg.sprite.Group()
 enemy_reports = pg.sprite.Group()
 bosses = False #ボスが出現しているかどうかを判断
 boss_spawn_time = 20 * 60  # 20秒後に出現（60fps換算）
+
 
 player = Player()
 all_sprites.add(player)   # ← ここは必ず追加しておく（描画されるように）
@@ -238,9 +239,10 @@ while running:
         for _ in hits:
             boss.hp -= 1
             if boss.hp <= 0:
-                score += 2  # スコアを2倍獲得
+                score += 50  # スコアを50獲得
                 boss.kill()  # ボスを消す
-                boss_active = False  # ボス状態を解除
+                bosses = False  # ボス状態を解除
+                frame_count = 0  # カウントリセット
 
     # 描画
     screen.blit(background, (0, 0))
