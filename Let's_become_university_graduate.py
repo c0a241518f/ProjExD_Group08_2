@@ -43,7 +43,7 @@ try:
     enemy_img = load_image(enemy_path)
     pencil_img = load_image(pencil_path)
     report_img = load_image(report_path)
-    lunch_img = load_image(lunch_path, required=False)
+    lunch_img = load_image(lunch_path)
     gameover_img = load_image(gameover_path, required=False)
     clear_img = load_image(clear_path, required=False)
 except FileNotFoundError as e:
