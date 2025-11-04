@@ -157,9 +157,9 @@ class Boss(pg.sprite.Sprite):
         super().__init__()
         self.image = pg.image.load("img/enemy.png")#boss
         self.rect = self.image.get_rect(center = (WIDTH / 2, HEIGHT == max))#画面上部中央に出現
-        self.speed_x = 1 #左右の速度
+        self.speed_x = 2 #左右の速度
         self.hp = 50 #ボスの体力
-        self.shoot_delay = 90  #弾を撃つ間隔
+        self.shoot_delay = 45  #弾を撃つ間隔
         self.timer = 0  #タイマーの初期化
 
     def update(self):
